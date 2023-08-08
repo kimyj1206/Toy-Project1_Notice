@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인</title>
+  
+  <style>
+    .title {
+      text-align: center;
+    }
+    .loginform {
+      text-align: center;
+      margin: 0 auto;
+      padding: 30px;
+    }
+    .visually-hidden {
+      padding: 30px;
+    }
+    #staticId2 {
+      width: 300px;
+    }
+    #inputPassword2 {
+      width: 300px;
+    }
+    button {
+      display: block;
+      width: 100px;
+      height: 25px;
+      margin: auto;
+    }
+  </style>
+
+</head>
+<body>
+
+  <h1 class="title">sign in</h1>
+
+  <div class="loginform">
+    <form class="row g-3" action="/login" method="post">
+      <div class="col-auto">
+        <label for="staticId2" class="visually-hidden">아이디</label>
+        <input type="text" class="form-control-plaintext" id="staticId2" name="Id" placeholder="아이디를 입력해 주세요" minlength="5" maxlength="20" required>
+      </div>
+      <div class="col-auto">
+        <label for="inputPassword2" class="visually-hidden">비밀번호</label>
+        <input type="password" class="form-control" id="inputPassword2" name="Password" placeholder="비밀번호를 입력해 주세요" minlength="5" maxlength="30" required>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary mb-3">로그인</button>
+        <p>아직 회원가입을 안하셨다면? <a href="/join">회원가입하러 가기</a></p>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

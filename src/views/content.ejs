@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시글 작성</title>
+  <style>
+    h1 {
+      text-align: center;
+    }
+    #exampleFormControlInput1 {
+      width: 100%;
+      height: 80px;
+    }
+    #exampleFormControlTextarea1 {
+      width: 100%;
+      height: 200px;
+    }
+    .form-label {
+      font-size: 18px;
+      margin: 10px;
+      padding-top: 30px;
+    }
+    button {
+      display: block;
+      width: 100px;
+      height: 30px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>게시글 작성</h1>
+  <form action="/content" method="post">
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">제목</label>
+      <input type="text" class="form-control" id="exampleFormControlInput1" name="Title" placeholder="글의 제목을 적어주세요">
+    </div>
+    <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">내용</label>
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="Content" placeholder="글의 내용을 적어주세요"></textarea>
+      <input type="submit" name="Cookie" hidden/>
+      <input type="submit" name="Time" hidden>
+    </div>
+    <button type="submit">등록하기</button>
+  </form>
+
+</body>
+</html>

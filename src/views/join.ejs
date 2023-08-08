@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입</title>
+  
+  <style>
+    .title {
+      text-align: center;
+    }
+    .joinform {
+      text-align: center;
+      margin: 0 auto;
+      padding: 30px;
+    }
+    .col-auto {
+      padding: 10px;
+    }
+    #Id {
+      width: 300px;
+    }
+    #Password {
+      width: 300px;
+    }
+    #Name {
+      width: 300px;
+    }
+    #Email {
+      width: 300px;
+    }
+    #Number {
+      width: 300px;
+    }
+    button {
+      display: block;
+      width: 100px;
+      height: 25px;
+      margin: auto;
+    }
+  </style>
+
+</head>
+<body>
+
+  <h1 class="title">sign up</h1>
+
+  <div class="joinform">
+    <form class="row g-3" action="/join" method="post">
+      <div class="col-auto">
+        <label for="Id" class="Id">아이디</label>
+        <input type="text" class="Id" id="Id" name="Id" placeholder="아이디를 입력해 주세요" minlength="5" maxlength="20" required>
+      </div>
+      <div class="col-auto">
+        <label for="Password" class="Password">비밀번호</label>
+        <input type="password" class="Password" id="Password" name="Password" placeholder="비밀번호를 입력해 주세요" minlength="5" maxlength="30" required>
+      </div>
+      <div class="col-auto">
+        <label for="Name" class="Name">이름</label>
+        <input type="text" class="Name" id="Name" name="Name" placeholder="이름을 입력해 주세요" required>
+      </div>
+      <div class="col-auto">
+        <label for="Email" class="Email">이메일<선택></label>
+        <input type="email" class="Email" id="Email" name="Email" placeholder="이메일을 입력해 주세요">
+      </div>
+      <div class="col-auto">
+        <label for="Number" class="Number">휴대전화<선택></label>
+        <input type="tel" class="Number" id="Number" name="Number" placeholder="하이픈 제외 휴대폰 번호를 입력해 주세요">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary mb-3">가입하기</button>
+        <p>이미 회원 가입을 하셨다면? <a href="/login">로그인하러 가기</a></p>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
