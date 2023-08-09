@@ -11,6 +11,7 @@
     #exampleFormControlInput1 {
       width: 100%;
       height: 80px;
+      outline: none;
     }
     #exampleFormControlTextarea1 {
       width: 100%;
@@ -20,6 +21,10 @@
       font-size: 18px;
       margin: 10px;
       padding-top: 30px;
+    }
+    .form-control:focus {
+      outline: none;
+      box-shadow: 0 0 5px #007bff;
     }
     button {
       display: block;
@@ -42,6 +47,7 @@
       <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="Content" placeholder="글의 내용을 적어주세요"></textarea>
       <input type="submit" name="Cookie" hidden/>
       <input type="submit" name="Time" hidden>
+      <input type="submit" name="Name" hidden>
     </div>
     <button type="submit">등록하기</button>
   </form>

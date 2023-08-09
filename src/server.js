@@ -63,7 +63,7 @@ serializeConfig();
 
 // mongoose 설정
 mongoose.set('strictQuery', false);
-mongoose.connect(`mongodb+srv://kimyj159297:kimyj7288@express-cluster.o37sbdu.mongodb.net/?retryWrites=true&w=majority`)
+mongoose.connect()
  .then(() => {console.log('Connected to MongoDB')})
  .catch((err) => {console.log(err)}); 
 
@@ -140,20 +140,18 @@ app.post('/content', (req, res, next) => {
     // 게시글 등록 시 해당 사용자가 cookie를 가지고 있다면 cookie에서 사용자의 고유 id만 추출
     if (req.headers.cookie) {
       const cookieValue = req.headers.cookie.substring(req.headers.cookie.indexOf('%') + 3, req.headers.cookie.indexOf('.'));
-      console.log(cookieValue);
 
       if (mongoose.Types.ObjectId.isValid(cookieValue)) {
         User.findById(cookieValue)
           .then((inUser, err) => {
             if (err) {
-              console.log(err);
-              return console.error(err);
+              console.error(err);
             }
             if (!inUser) {
-
               console.log('db user not found');
             } else {
               req.body["Cookie"] = cookieValue; // req.body에 강제로 쿠키 값 넣음
+              req.body["Name"] = inUser.Name; // req.body에 user name 강제 주입
               const content = new Content(req.body);
               content.save();
               res.redirect('/');
@@ -174,16 +172,59 @@ app.post('/content', (req, res, next) => {
 // READ CONTENT
 app.get('/', async (req, res) => {
   try {
-    const contents = await Content.find({}).sort({ createdAt: -1 });
-    res.render('index',  {contents : contents} );
+    const contentAll = await Content.find({}).sort({ createdAt: -1 });
+    res.render('index',  { contents : contentAll } );
   } catch (error) {
-    res.status(500).json({ error: '게시물을 가져오는데 실패했습니다. '});
+    res.status(500).json({ error: '게시물을 가져오는데 실패했습니다.' });
   }
 });
+
+// DETAIL CONTENT
+app.get('/detail/:contentId', async (req, res) => {
+  try {
+    const contentId = req.params.contentId
+    const contentInfo = await Content.findById(contentId); // contentId를 통해 Content 전체가 튀어나옴
+
+    // res.render('detail', { content : contentInfo });
+
+    const cookieValue = req.headers.cookie.substring(req.headers.cookie.indexOf('%') + 3, req.headers.cookie.indexOf('.'));
+    // if (cookieValue == contentInfo.Cookie) {
+      
+    //   // res.send(`<html><body><p><a href="/content/update">게시글 수정하러 가기</a></p></body></html>`);
+      
+    //   // res.locals.allowEdit = true;
+    // } else {
+    //   console.log(error.message);
+    // }
+
+
+
+  } catch(error) {
+    res.status(500).json({ error : '상세 게시물을 읽어들이는데 실패했습니다.' })
+  }
+});
+
+
+// 수정 중
+app.use((req, res, next) => {
+  return res.render('detail', { content : contentInfo })
+});
+
+app.use((req, res, next) => {
+  return res.send(`<html><body><p><a href="/content/update">게시글 수정하러 가기</a></p></body></html>`);
+});
+
+
+
+
+
+
+// 로그인한 사용자가 가진 쿠키 고유값과 content 테이블에 저장된 사용자의 쿠키 값이 일치하면 수정 버튼 생성
+
 // UPDATE CONTENT
+app.get('', (req, res) => {
 
-
-
+});
 
 // DELETE CONTENT
 

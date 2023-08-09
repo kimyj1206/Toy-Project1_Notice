@@ -11,7 +11,7 @@ const contentSchema = mongoose.Schema({
   Content: {
     type: String,
     require: true,
-    minLength: 5,
+    minLength: 2,
     maxLength: 500
   }, 
   Cookie: {
@@ -22,9 +22,12 @@ const contentSchema = mongoose.Schema({
     type: String,
     require: true,
     default: new Date(Date.now()).toISOString().split('T')[0] + ' ' + new Date(Date.now()).toTimeString().split(' ')[0] // string 타입 주소 값이 아닌 값 자체가 나옴
+  },
+  Name: {
+    type: String,
+    require: true
   }
 });
-
 
 // model 생성
 const Content = mongoose.model('Content', contentSchema);

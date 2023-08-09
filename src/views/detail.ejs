@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시글 상세</title>
+  <style>
+    h1 {
+      text-align: center;
+    }
+    .container {
+      padding: 20px;
+    }
+    .title {
+      font-size: 25px;
+      font-weight: 600;
+      /* background-color: #CCFFFF; */
+      background-color: #FFFF99;
+      border-top: 1px solid #909090;
+      border-bottom: 1px solid #909090;
+      padding: 10px;
+    }
+    .info {
+      display: flex;
+      padding: 0;
+      width: 100%;
+    }
+    li {
+      margin-right: 10px;
+      font-size: 12px;
+      list-style: none;
+    }
+    li:nth-child(even) {
+      padding-right: 10px;
+      border-right: 1px solid #909090;
+    }
+    li:last-child {
+      border-right: none;
+    }
+    .divider {
+      width: 100%;
+      border-top: 1px solid #ccc;
+      margin: 20px 0;
+    }
+    .content {
+      margin: 40px 0;
+      font-size: 16px;
+    }
+    a {
+      list-style: none;
+      color: black;
+      text-decoration: none;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      
+    }
+    .custom-button {
+      margin: 0 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>상세 게시글</h1>
+
+  <div class="container">
+    <div class="title"><%= content.Title %></div>
+    <ul class="info">
+      <li>작성자</li>
+      <li><%= content.Name %></li>
+      <li>작성일자</li>
+      <li><%= content.Time %></li>
+    </ul>
+    <div class="divider"></div>
+    <div class="content"><%= content.Content %></div>
+    <div class="divider"></div>
+  </div>
+
+  <div class="button-container">
+    <button class="custom-button"><a href="/">홈으로 이동</a></button>
+    <button class="custom-button"><a href="/content">게시글 작성하러 가기</a></button>
+    <!-- <% if (locals.allowEdit) { %>
+      <p><a href="/content/update">수정하러 이동</a></p>
+    <% } %> -->
+  </div>
+</body>
+</html>

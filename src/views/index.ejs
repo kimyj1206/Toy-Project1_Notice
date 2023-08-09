@@ -8,12 +8,19 @@
   <title>게시판</title>
 
   <style>
-    .d-flex {
-      font: 18px sans-serif;
-      margin-top: 130px;
-      padding: 20px;
-      display: flex;
-      border-bottom: 1px solid #a0a0a0;
+    body {
+      padding-top: 80px;
+    }
+    .navbar {
+      margin-bottom: 20px;
+    }
+    .table {
+      margin-top: 30px;
+      text-align: center;
+    }
+    a {
+      text-decoration: none;
+      color: black;
     }
   </style>
 
@@ -55,24 +62,52 @@
     </div>
   </nav>
 
-  <div id="content-list">
-    <div class="d-flex justify-content-around">
-      <div>글 번호</div>
-      <div>글 제목</div>
-      <div>작성자</div>
-      <div>작성일자</div>
-    </div>
+  <table class="table table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">글 번호</th>
+        <th scope="col">글 제목</th>
+        <th scope="col">작성자</th>
+        <th scope="col">작성일자</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- DB를 조회해서 모든 게시물을 가져오는 것이기에 그때 가지고 있던 고유 id가 get으로 조회 시 url에 담겨 확인할 수 있었던 것 -->
+      <% contents.forEach((content, j) => { %>
+        <tr>
+          <th><%= j + 1 %></th>
+          <td><a href="/detail/<%= content._id %>"> <%= content.Title %> </a></td>
+          <td><%= content.Name %></td>
+          <td><%= content.Time %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
 
-  <!-- forEach index return => 언어에 따라 비동기 // for index return x => 무조건 동기 -->
-    <% contents.forEach((content, j) => { %>
-      <div class="d-flex justify-content-around">
-        <div><%= j + 1 %></div>
-        <div><%= content.Title %></div>
-        <div><%= content.Cookie %></div>
-        <div><%= content.Time %></div>
+  <footer>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+          <a class="page-link">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="">1</a></li>
+        <li class="page-item"><a class="page-link" href="">2</a></li>
+        <li class="page-item"><a class="page-link" href="">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="">Next</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group me-2" role="group" aria-label="First group">
+        <button type="button" class="btn btn-primary">1</button>
+        <button type="button" class="btn btn-primary">2</button>
+        <button type="button" class="btn btn-primary">3</button>
+        <button type="button" class="btn btn-primary">4</button>
       </div>
-    <% }) %>
-  </div>
-  
+    </div> -->
+  </footer>
+
 </body>
 </html>
