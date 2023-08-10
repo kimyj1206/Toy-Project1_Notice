@@ -23,7 +23,7 @@ app.use(express.urlencoded( { extended : false } ));
 app.use(express.json());
 
 // session 및 passport 설정 순서 변경 시 미들웨어 필요 오류 발생
-const secretText = 'qwertasdfgzxcvb';
+const secretText = 'hello world';
 app.use(cookieParser(secretText)); // cookieParser는 req 객체의 cookies 속성에 할당 / 요청된 쿠키를 쉽게 추출할 수 있는 미들웨어
 
 // cookieSession : client의 session data를 cookie에 저장
@@ -44,26 +44,26 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // passport랑 cookie-session 같이 사용해서 발생하는 에러를 막아주는 코드
-app.use(function (req, res, next) {
-  if (req.session && !req.session.regenerate) {
-    req.session.regenerate = (cb) => {
-      cb();
-    }
-  }
-  if (req.session && !req.session.save) {
-    req.session.save = (cb) => {
-      cb();
-    }
-  }
-  next();
-});
+// app.use(function (req, res, next) {
+//   if (req.session && !req.session.regenerate) {
+//     req.session.regenerate = (cb) => {
+//       cb();
+//     }
+//   }
+//   if (req.session && !req.session.save) {
+//     req.session.save = (cb) => {
+//       cb();
+//     }
+//   }
+//   next();
+// });
 
 // serialize 및 deserialize 불러옴
 serializeConfig();
 
 // mongoose 설정
 mongoose.set('strictQuery', false);
-mongoose.connect()
+mongoose.connect(`mongodb+srv://kimyj159297:kimyj7288@express-cluster.o37sbdu.mongodb.net/?retryWrites=true&w=majority`)
  .then(() => {console.log('Connected to MongoDB')})
  .catch((err) => {console.log(err)}); 
 
@@ -104,15 +104,17 @@ app.post('/login', (req, res, next) => {
       return res.redirect('/login');
     } else {
       // cookie 생성
+      // user의 고유 id를 가지고 쿠키 생성
       res.cookie('cookieSession', user._id.toString(), {
-        signed: true,
+        signed: false,
         httpOnly: true,
-        maxAge: 3600 * 24 * 6000
+        maxAge: 3600 * 24
       });
+      // user의 닉네임을 가지고 쿠키 생성
       res.cookie('userName', user.Name, {
         signed: false,
         httpOnly: true,
-        maxAge: 3600 * 24 * 6000
+        maxAge: 3600 * 24
       });
       return res.redirect('/');
     }
@@ -122,8 +124,15 @@ app.post('/login', (req, res, next) => {
 // 로그아웃
 app.get('/logout', (req, res) => {
   if(req.headers.cookie) { // 쿠키 변경이 됐는지 여부를 확인해야 함.
-    res.cookie('cookieSession', secretText, {maxAge: 0})
-    res.send(`로그아웃되셨습니다. <html><body><p><a href="/">홈으로 돌아가기</a><p></body></html>`);
+    // res.cookie('cookieSession', secretText, { maxAge: 0 });
+    // res.clearCookie('cookieSession', {
+    //   signed: true,
+    //   httpOnly: true
+    // });
+    res.cookie('cookieSession');
+    res.cookie('userName');
+    res.cookie('session');
+    res.send(`로그아웃되셨습니다. <html><body><p><a href="/">홈으로 돌아가기</a><p></body></html>`); // alert
   } else {
     res.redirect('/');
   }
@@ -182,53 +191,36 @@ app.get('/', async (req, res) => {
 // DETAIL CONTENT
 app.get('/detail/:contentId', async (req, res) => {
   try {
-    const contentId = req.params.contentId
-    const contentInfo = await Content.findById(contentId); // contentId를 통해 Content 전체가 튀어나옴
+    const contentId = req.params.contentId;
+    const contentInfo = await Content.findById(contentId);
 
-    // res.render('detail', { content : contentInfo });
+    const cookieValue = req.headers.cookie.split('; ');
+    const cookieSessionCookie = cookieValue.find(cookie => cookie.startsWith("cookieSession")); // 원리 알아보기
+    let allowEdit = false; // Initialize to false by default
+    if (cookieSessionCookie) {
+      const cookieSessionValue = cookieSessionCookie.split("=")[1];
+        if (cookieSessionValue == contentInfo.Cookie) {
+          allowEdit  = true;
+        }
+    } else {
+      console.log("cookieSession cookie not found");
+    }
 
-    const cookieValue = req.headers.cookie.substring(req.headers.cookie.indexOf('%') + 3, req.headers.cookie.indexOf('.'));
-    // if (cookieValue == contentInfo.Cookie) {
-      
-    //   // res.send(`<html><body><p><a href="/content/update">게시글 수정하러 가기</a></p></body></html>`);
-      
-    //   // res.locals.allowEdit = true;
-    // } else {
-    //   console.log(error.message);
-    // }
-
-
-
+    res.render('detail', { "content": contentInfo, "allowEdit": allowEdit });
+    
   } catch(error) {
     res.status(500).json({ error : '상세 게시물을 읽어들이는데 실패했습니다.' })
   }
 });
 
-
-// 수정 중
-app.use((req, res, next) => {
-  return res.render('detail', { content : contentInfo })
-});
-
-app.use((req, res, next) => {
-  return res.send(`<html><body><p><a href="/content/update">게시글 수정하러 가기</a></p></body></html>`);
-});
-
-
-
-
-
-
 // 로그인한 사용자가 가진 쿠키 고유값과 content 테이블에 저장된 사용자의 쿠키 값이 일치하면 수정 버튼 생성
 
 // UPDATE CONTENT
-app.get('', (req, res) => {
-
+app.get('/detail/content', (req, res) => {
+  res.render();
 });
 
 // DELETE CONTENT
-
-
 
 
 
@@ -249,46 +241,4 @@ function notAuthLogin(req, res) {
 };
 
 
-
-
 //  done의 방향은? / 저장된 사용자의 _id로 로그인 여부 확인 / 쿠키 암호화 / 로그인한 사용자의 id가 화면 상단에 노출되는 기능 추가 요청 / logout 페이지 처리 추가하면 좋을듯..? /
-
-// 아래는 error 코드
-// app.post('/login', function(req, res) {
-
-//   passport.authenticate('local', (err, user, info) => {
-//     if (err) { console.log(info); }
-
-//     if (!user) {
-//       console.log(info);
-//     } else {
-//       res.redirect('/');
-//     }
-//   })(req, res)
-// });
-
-
-// app.post('/login', passport.authenticate('local', (err, user, info) => {
-//   console.log('1111');
-//     if (err) { console.log(info); }
-//     console.log('2222');
-  
-//     if (!user) {
-//       console.log(info);
-//       res.redirect('/join');
-//     }
-//     console.log('3333');
-//     res.redirect('/');
-//   })
-// );
-
-// 원본 코드
-  // const content = new Content(req.body);
-  // console.log("req.body : ", req.body);
-
-  // try {
-  //   await content.save();
-  //   res.redirect('/');
-  // } catch (error) {
-  //   console.error("게시글 error! : " + error);
-  // }

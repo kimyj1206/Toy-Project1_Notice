@@ -80,9 +80,17 @@
   <div class="button-container">
     <button class="custom-button"><a href="/">홈으로 이동</a></button>
     <button class="custom-button"><a href="/content">게시글 작성하러 가기</a></button>
-    <!-- <% if (locals.allowEdit) { %>
-      <p><a href="/content/update">수정하러 이동</a></p>
-    <% } %> -->
+ 
+    <button id="updateContent" class="custom-button" 
+      <% if (allowEdit) { %>
+        style="display: block;"
+      <% } else { %>
+        style="display: none;"
+      <% } %>
+    >
+  <a href="/content/update">게시글 수정하러 가기</a>
+</button>
   </div>
+
 </body>
 </html>
