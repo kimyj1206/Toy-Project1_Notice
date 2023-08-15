@@ -3,9 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>수정페이지</title>
+  <style>
+    h1 {
+      text-align: center;
+    }
+    #exampleFormControlInput1 {
+      width: 100%;
+      height: 80px;
+      outline: none;
+    }
+    #exampleFormControlTextarea1 {
+      width: 100%;
+      height: 200px;
+    }
+    .form-label {
+      font-size: 18px;
+      margin: 10px;
+      padding-top: 30px;
+    }
+    .form-control:focus {
+      outline: none;
+      box-shadow: 0 0 5px #007bff;
+    }
+    button {
+      display: block;
+      width: 100px;
+      height: 30px;
+      margin: auto;
+    }
+  </style>
+  <title>게시글 수정</title>
 </head>
 <body>
-  
+
+  <h1>게시글 수정</h1>
+
+  <form action="/content/update/<%= contentDetail._id %>" method="post">
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">제목</label>
+      <input type="text" class="form-control" id="exampleFormControlInput1" name="Title" value="<%= contentDetail.Title %>">
+    </div>
+    <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">내용</label>
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="content"><%= contentDetail.Content %></textarea>
+      <input type="hidden" name="Cookie" value="<%= contentDetail.Cookie %>" />
+      <input type="hidden" name="Time" value="<%= contentDetail.Time %>" />
+      <input type="hidden" name="Name" value="<%= contentDetail.Name %>" />
+    </div>
+    <button type="submit">수정하기</button>
+  </form>
+
 </body>
 </html>

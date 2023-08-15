@@ -22,6 +22,12 @@
       text-decoration: none;
       color: black;
     }
+    footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    }
   </style>
 
 </head>
@@ -75,9 +81,13 @@
       <!-- DB를 조회해서 모든 게시물을 가져오는 것이기에 그때 가지고 있던 고유 id가 get으로 조회 시 url에 담겨 확인할 수 있었던 것 -->
       <% contents.forEach((content, j) => { %>
         <tr>
+          <!-- 게시글 번호 -->
           <th><%= j + 1 %></th>
+          <!-- 게시글 이동 및 제목 -->
           <td><a href="/detail/<%= content._id %>"> <%= content.Title %> </a></td>
+          <!-- 게시글 작성자 -->
           <td><%= content.Name %></td>
+          <!-- 게시글 작성일자 -->
           <td><%= content.Time %></td>
         </tr>
       <% }) %>
@@ -85,28 +95,26 @@
   </table>
 
   <footer>
+
     <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        <li class="page-item disabled">
-          <a class="page-link">Previous</a>
-        </li>
-        <li class="page-item"><a class="page-link" href="">1</a></li>
-        <li class="page-item"><a class="page-link" href="">2</a></li>
-        <li class="page-item"><a class="page-link" href="">3</a></li>
+      <ul class="pagination">
         <li class="page-item">
-          <a class="page-link" href="">Next</a>
+          <a class="page-link" href="" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <% (var i = 0; i < content.size/10; i++) { &>
+        <%= <li class="page-item"><a class="page-link" href="">i</a></li> %>
+        <& } %>
+        %>
+        <li class="page-item">
+          <a class="page-link" href="/" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
         </li>
       </ul>
     </nav>
 
-    <!-- <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-      <div class="btn-group me-2" role="group" aria-label="First group">
-        <button type="button" class="btn btn-primary">1</button>
-        <button type="button" class="btn btn-primary">2</button>
-        <button type="button" class="btn btn-primary">3</button>
-        <button type="button" class="btn btn-primary">4</button>
-      </div>
-    </div> -->
   </footer>
 
 </body>

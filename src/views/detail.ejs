@@ -62,6 +62,7 @@
   </style>
 </head>
 <body>
+
   <h1>상세 게시글</h1>
 
   <div class="container">
@@ -79,7 +80,7 @@
 
   <div class="button-container">
     <button class="custom-button"><a href="/">홈으로 이동</a></button>
-    <button class="custom-button"><a href="/content">게시글 작성하러 가기</a></button>
+    <button class="custom-button"><a href="/content">게시글 작성</a></button>
  
     <button id="updateContent" class="custom-button" 
       <% if (allowEdit) { %>
@@ -88,8 +89,20 @@
         style="display: none;"
       <% } %>
     >
-  <a href="/content/update">게시글 수정하러 가기</a>
-</button>
+      <a href="/content/update/<%= content._id %>">게시글 수정</a>
+    </button>
+
+    <button id="deleteContent" class="custom-button"
+      <% if (allowEdit) { %>
+        style="display: block;"
+      <% } else { %>
+        style="display: none;"
+      <% } %>
+    >
+      <a href="/content/delete/<%= content._id %>">게시글 삭제</a>
+    </button>
+
+
   </div>
 
 </body>

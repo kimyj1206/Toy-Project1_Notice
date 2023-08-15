@@ -114,7 +114,7 @@ app.post('/login', (req, res, next) => {
       res.cookie('userName', user.Name, {
         signed: false,
         httpOnly: true,
-        maxAge: 3600 * 24
+        maxAge: 3600 * 24 * 240
       });
       return res.redirect('/');
     }
@@ -123,7 +123,8 @@ app.post('/login', (req, res, next) => {
 
 // 로그아웃
 app.get('/logout', (req, res) => {
-  if(req.headers.cookie) { // 쿠키 변경이 됐는지 여부를 확인해야 함.
+  if(req.headers.cookie) {
+    // 쿠키 변경이 됐는지 여부를 확인해야 함.
     // res.cookie('cookieSession', secretText, { maxAge: 0 });
     // res.clearCookie('cookieSession', {
     //   signed: true,
@@ -132,9 +133,9 @@ app.get('/logout', (req, res) => {
     res.cookie('cookieSession');
     res.cookie('userName');
     res.cookie('session');
-    res.send(`로그아웃되셨습니다. <html><body><p><a href="/">홈으로 돌아가기</a><p></body></html>`); // alert
+    res.status(200).redirect('/');
   } else {
-    res.redirect('/');
+    res.status(500).json('로그아웃 실패 다시 시도 바람');
   }
 });
 
@@ -148,7 +149,9 @@ app.post('/content', (req, res, next) => {
   try {
     // 게시글 등록 시 해당 사용자가 cookie를 가지고 있다면 cookie에서 사용자의 고유 id만 추출
     if (req.headers.cookie) {
-      const cookieValue = req.headers.cookie.substring(req.headers.cookie.indexOf('%') + 3, req.headers.cookie.indexOf('.'));
+      const cookieSplit = req.headers.cookie.split('; ');
+      const cookieSessionValue = cookieSplit.find(cookie => cookie.startsWith("cookieSession"));
+      const cookieValue = cookieSessionValue.substring(14, 38);
 
       if (mongoose.Types.ObjectId.isValid(cookieValue)) {
         User.findById(cookieValue)
@@ -189,14 +192,18 @@ app.get('/', async (req, res) => {
 });
 
 // DETAIL CONTENT
+// 로그인한 사용자가 가진 쿠키 고유값과 content 테이블에 저장된 사용자의 쿠키 값이 일치하면 수정 버튼 생성
 app.get('/detail/:contentId', async (req, res) => {
   try {
     const contentId = req.params.contentId;
     const contentInfo = await Content.findById(contentId);
+    // console.log('contentInfo : ' + contentInfo);
 
     const cookieValue = req.headers.cookie.split('; ');
     const cookieSessionCookie = cookieValue.find(cookie => cookie.startsWith("cookieSession")); // 원리 알아보기
+
     let allowEdit = false; // Initialize to false by default
+
     if (cookieSessionCookie) {
       const cookieSessionValue = cookieSessionCookie.split("=")[1];
         if (cookieSessionValue == contentInfo.Cookie) {
@@ -205,22 +212,88 @@ app.get('/detail/:contentId', async (req, res) => {
     } else {
       console.log("cookieSession cookie not found");
     }
-
     res.render('detail', { "content": contentInfo, "allowEdit": allowEdit });
-    
   } catch(error) {
     res.status(500).json({ error : '상세 게시물을 읽어들이는데 실패했습니다.' })
   }
 });
 
-// 로그인한 사용자가 가진 쿠키 고유값과 content 테이블에 저장된 사용자의 쿠키 값이 일치하면 수정 버튼 생성
+// -> 등록 버튼 클릭 -> db 저장 -> 화면에 수정된 게시글의 정보가 노출 -> 이전 정보는 사라짐
 
 // UPDATE CONTENT
-app.get('/detail/content', (req, res) => {
-  res.render();
+// 해당 사용자가 자신의 게시물 수정 버튼 클릭 시 content 고유 아이디로 db 조회해서 사용자에게 수정할 수 있게 보여줌
+app.get('/content/update/:contentId', async (req, res) => {
+  try {
+    const contentId = req.params.contentId;
+    const contentDetail = await Content.findById(contentId);
+    res.render('update', { contentDetail: contentDetail });
+  } catch (error) {
+    res.status(500).json('수정 접근 실패 ' + error.message);
+  }
+
+});
+
+app.post('/content/update/:contentId', async (req, res) => {
+  try {
+    // const contentId = req.params.contentId;
+    const { contentId } = req.params;
+    console.log('contentId : ' + contentId);
+
+    // 게시글의 Content와 db 이름의 Content가 중복이어서 find를 하지 못하는 에러 발생했었음.
+    const { Title, content, Cookie, Time, Name } = req.body;
+    const updateContent = {
+      Title,
+      Content : content,
+      Cookie,
+      Time,
+      Name
+    };
+
+    const updatedContent = await Content.findOneAndUpdate({ _id : contentId }, updateContent, { new : true });
+    console.log('updated : ' + updatedContent);
+    
+    if (updatedContent) {
+      console.log('Content updated successfully');
+      res.redirect('/');
+    } else {
+      res.status(404).json('Content not found');
+    }
+  } catch (error) {
+    res.status(500).json('게시물 수정 실패 ' + error.message);
+  }
 });
 
 // DELETE CONTENT
+app.get('/content/delete/:contentId', async (req, res) => {
+  try {
+    const { contentId } = req.params;
+    const deleteContent = await Content.findById(contentId);
+    res.render('delete', { deleteContent: deleteContent });
+  } catch (error) {
+    res.status(500).json('삭제 접근 실패 ' + error.message);
+  }
+});
+
+app.post('/content/delete/:contentId', async (req, res) => {
+  try {
+    const { contentId } = req.params;
+    const delContent = await Content.findByIdAndDelete(contentId);
+    console.log(delContent);
+
+    if (delContent) {
+      console.log('Content deleted successfully');
+      res.redirect('/');
+    } else {
+      res.status(404).json('Content delete failed');
+    }
+  } catch (error) {
+    res.status(500).json('게시물 삭제 실패 ' + error.message);
+  }
+});
+
+
+
+
 
 
 
@@ -241,4 +314,5 @@ function notAuthLogin(req, res) {
 };
 
 
-//  done의 방향은? / 저장된 사용자의 _id로 로그인 여부 확인 / 쿠키 암호화 / 로그인한 사용자의 id가 화면 상단에 노출되는 기능 추가 요청 / logout 페이지 처리 추가하면 좋을듯..? /
+// done의 방향은? / 저장된 사용자의 _id로 로그인 여부 확인 / 쿠키 암호화
+// 로그인한 사용자의 id가 화면 상단에 노출되는 기능 추가 요청 / logout 페이지 처리 추가하면 좋을듯..? -> alert 처리 / 수정 업데이트 시 시간 변경 안됨

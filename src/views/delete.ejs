@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    h1 {
+      text-align: center;
+    }
+    .container {
+      padding: 20px;
+    }
+    .title {
+      font-size: 25px;
+      font-weight: 600;
+      /* background-color: #CCFFFF; */
+      background-color: #FFFF99;
+      border-top: 1px solid #909090;
+      border-bottom: 1px solid #909090;
+      padding: 10px;
+    }
+    .info {
+      display: flex;
+      padding: 0;
+      width: 100%;
+    }
+    li {
+      margin-right: 10px;
+      font-size: 12px;
+      list-style: none;
+    }
+    li:nth-child(even) {
+      padding-right: 10px;
+      border-right: 1px solid #909090;
+    }
+    li:last-child {
+      border-right: none;
+    }
+    .divider {
+      width: 100%;
+      border-top: 1px solid #ccc;
+      margin: 20px 0;
+    }
+    .content {
+      margin: 40px 0;
+      font-size: 16px;
+    }
+    button {
+      display: block;
+      width: 100px;
+      height: 30px;
+      margin: auto;
+    }
+  </style>
+  <title>게시글 삭제</title>
+</head>
+<body>
+  
+  <h1>게시글 삭제</h1>
+
+  <form action="/content/delete/<%= deleteContent._id %>" method="post">
+    
+    <div class="container">
+      <div class="title"><%= deleteContent.Title %></div>
+      <ul class="info">
+        <li>작성자</li>
+        <li><%= deleteContent.Name %></li>
+        <li>작성일자</li>
+        <li><%= deleteContent.Time %></li>
+      </ul>
+      <div class="divider"></div>
+      <div class="content"><%= deleteContent.Content %></div>
+      <div class="divider"></div>
+    </div>
+
+    <button id="btn-delete" type="submit" onclick="javascript:confirm('현재 게시글을 삭제하시겠습니까?')">삭제하기</button>
+  </form>
+
+</body>
+</html>
